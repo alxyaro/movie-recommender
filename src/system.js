@@ -1,5 +1,6 @@
 // TODO do all the recommender system initialization & calculation logic here
 const movies = require("./content/movies.json");
+const ratings = require("./content/ratings.json");
 
 export function init() {
 	// load dataset, process it, etc...
