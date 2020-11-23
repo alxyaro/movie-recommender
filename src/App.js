@@ -1,5 +1,5 @@
 //import logo from './logo.svg';
-import MovieComponent from './MovieComponent';
+import Movie from './components/Movie';
 
 function App() {
 	return (
@@ -8,10 +8,10 @@ function App() {
 				{/*<img src={logo} className="App-logo" alt="logo"/>*/}
 			</header>
 			<div className="movies-container">
-				<MovieComponent/>
-				<MovieComponent/>
-				<MovieComponent/>
-				<MovieComponent/>
+				<Movie/>
+				<Movie/>
+				<Movie/>
+				<Movie/>
 			</div>
 		</div>
 	);
