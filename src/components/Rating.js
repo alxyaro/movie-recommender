@@ -8,7 +8,7 @@ export default class Rating extends React.Component {
 			hoveringOn: undefined,
 			userValue: this.props.movie?.userRating || null
 		};
-		this.defaultValue = this.props.movie?.averageRating || 0;
+		this.defaultValue = this.props.movie?.avgRating || 0;
 	}
 	onMouseEnter(pos) {
 		this.setState({
@@ -26,7 +26,7 @@ export default class Rating extends React.Component {
 			this.props.movie.userRating = rating;
 		else
 			delete this.props.movie.userRating;
-		system.ratingUpdated(this.props.movie?.id || undefined, rating)
+		system.ratingUpdated(this.props?.movie || undefined, rating)
 		this.setState({
 			userValue: rating
 		});

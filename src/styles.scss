@@ -1,11 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
 
 html {
-	background: linear-gradient(#4c3f4b, #251e25) no-repeat center center fixed;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
+	background: black repeat center center fixed;
+	background-image: url("./content/bg.png"), linear-gradient(#4c3f4b, #251e25);
+	background-size: auto;
 }
 
 body {
@@ -34,6 +32,7 @@ body {
 		padding: 10px;
 		box-sizing: border-box;
 		transform: scale(0.97);
+		transform-origin: 50% 90%;
 		transition: transform 200ms, opacity 300ms;
 
 		&.hidden {
@@ -128,7 +127,7 @@ body {
 		&:after {
 			content: "\e902";
 			opacity: 0;
-			color: #ffd230;
+			color: #c0ff00;
 			font-size: 21px;
 		}
 
@@ -139,5 +138,6 @@ body {
 
 	&:active .star.active:after {
 		transform: scale(1.2);
+		transition: transform 50ms, opacity 50ms;
 	}
 }

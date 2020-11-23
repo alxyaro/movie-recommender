@@ -22,7 +22,7 @@ export default class Movie extends React.Component {
 				<div className="info">
 					<div className="stats">
 						<div className="similarity">98% match</div>
-						<Rating movie={{averageRating: 3.5, userRating: 3}}/>
+						<Rating movie={this.props.movie}/>
 					</div>
 					<h2>
 						{this.props.movie.title}
