@@ -33,8 +33,13 @@ body {
 	.movie {
 		padding: 10px;
 		box-sizing: border-box;
-		transform: scale(0.96);
-		transition: transform 200ms;
+		transform: scale(0.97);
+		transition: transform 200ms, opacity 300ms;
+
+		&.hidden {
+			opacity: 0;
+			transform: scale(0.5);
+		}
 
 		&:hover {
 			transform: scale(1);
@@ -60,6 +65,17 @@ body {
 					margin-bottom: 0;
 					font-size: 20px;
 				}
+
+				.stats {
+					// display: flex;
+					align-items: center;
+					justify-content: space-between;
+
+					.similarity {
+						font-size: 14px;
+						color: #3cea3c;
+					}
+				}
 			}
 		}
 	}
@@ -73,7 +89,7 @@ body {
 }
 
 .rating {
-	display: flex;
+	display: inline-flex;
 	margin-left: -2px;
 	margin-bottom: 4px;
 
@@ -93,7 +109,7 @@ body {
 			position: absolute;
 			top: 0;
 			left: 0;
-			transition: transform 100ms, opacity 100ms;
+			transition: transform 150ms, opacity 150ms;
 		}
 
 		&:before {
@@ -103,7 +119,6 @@ body {
 
 		&.full:before {
 			content: "\e902";
-			color: rgba(white, 0.7);
 		}
 
 		&.half:before {
@@ -113,7 +128,8 @@ body {
 		&:after {
 			content: "\e902";
 			opacity: 0;
-			color: yellow;
+			color: #ffd230;
+			font-size: 21px;
 		}
 
 		&.active:after {

@@ -8,10 +8,10 @@ function App() {
 				{/*<img src={logo} className="App-logo" alt="logo"/>*/}
 			</header>
 			<div className="movies-container">
-				<Movie/>
-				<Movie/>
-				<Movie/>
-				<Movie/>
+				<Movie fadein={100}/>
+				<Movie fadein={200}/>
+				<Movie fadein={300}/>
+				<Movie fadein={400}/>
 			</div>
 		</div>
 	);
