@@ -22,7 +22,11 @@ export default class Rating extends React.Component {
 	}
 	setRating(rating) {
 		rating = rating === this.state.userValue ? null : rating;
-		system.processRating(this.props.movie?.id || undefined, rating)
+		if (rating != null)
+			this.props.movie.userRating = rating;
+		else
+			delete this.props.movie.userRating;
+		system.ratingUpdated(this.props.movie?.id || undefined, rating)
 		this.setState({
 			userValue: rating
 		});

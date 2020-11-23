@@ -1,20 +1,28 @@
 //import logo from './logo.svg';
-import Movie from './components/Movie';
+import {Component} from "react";
+import Movie from "./components/Movie";
 
-function App() {
-	return (
-		<div id="content">
-			<header className="App-header">
-				{/*<img src={logo} className="App-logo" alt="logo"/>*/}
-			</header>
-			<div className="movies-container">
-				<Movie fadein={100}/>
-				<Movie fadein={200}/>
-				<Movie fadein={300}/>
-				<Movie fadein={400}/>
+import * as system from "./system";
+
+export default class App extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			movies: system.nextBatch(12)
+		};
+	}
+
+	render() {
+		return (
+			<div id="content">
+				<header className="App-header">
+					{/*<img src={logo} className="App-logo" alt="logo"/>*/}
+				</header>
+				<div className="movies-container">
+					{this.state.movies.map((movie, i) => <Movie movie={movie} fadein={i*100}/>)}
+				</div>
 			</div>
-		</div>
-	);
+		);
+	}
 }
-
-export default App;
