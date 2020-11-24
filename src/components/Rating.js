@@ -51,6 +51,7 @@ export default class Rating extends React.Component {
 				classes += " active";
 			}
 			stars.push(<div
+				key={i}
 				className={classes}
 				onMouseEnter={this.onMouseEnter.bind(this, i)}
 				onMouseLeave={this.onMouseLeave.bind(this)}

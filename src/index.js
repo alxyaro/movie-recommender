@@ -9,9 +9,7 @@ import * as system from './system';
 system.init();
 
 ReactDOM.render(
-	<React.StrictMode>
-		<App/>
-	</React.StrictMode>,
+	<App/>,
 	document.getElementById('root')
 );
 

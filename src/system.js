@@ -13,8 +13,6 @@ export function ratingUpdated(movie, rating) {
 	// record user's rating for this movie (use movie.id)
 	// rating may be null (if rating was removed)
 	// otherwise, param rating is in [1,5]
-	// this function may be unnecessary, as the movie.userRating value will be updated automatically
-	// but it can be used to potentially help the nextBatch function in some way
 	// TODO
 
 }

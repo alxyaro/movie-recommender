@@ -20,7 +20,7 @@ export default class App extends Component {
 					{/*<img src={logo} className="App-logo" alt="logo"/>*/}
 				</header>
 				<div className="movies-container">
-					{this.state.movies.map((movie, i) => <Movie movie={movie} fadein={i*100}/>)}
+					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={i*100}/>)}
 				</div>
 			</div>
 		);
