@@ -30,17 +30,8 @@ export default class Rating extends React.Component {
 		this.setState({
 			userValue: rating
 		});
-		
-		// Update user ratings in local storage (Caching in browser easier than managing another JSON file IMO)
-		// Quick change if we want to write out to JSON file instead regardless
-		if (localStorage.getItem('userRatings') !== null) {
-			let currentRatings = JSON.parse(localStorage.getItem('userRatings'))
-			currentRatings[1][this.props.movie.id] = {"val": rating, "time": Date.now()}
-			localStorage.setItem('userRatings', JSON.stringify(currentRatings))
-		}
-		else {
-			localStorage.setItem('userRatings', JSON.stringify({1: { [this.props.movie.id]: {"val": rating, "time": Date.now()}}}))
-		}
+
+		this.props.addToList({"id": this.props.movie.id, "val": rating, "time": Date.now()})
 	}
 	render() {
 		const stars = [];

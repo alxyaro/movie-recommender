@@ -9,7 +9,8 @@ export default class App extends React.Component {
 		super(props);
 
 		this.state = {
-			movies: system.nextBatch(12)
+			movies: system.nextBatch(12),
+			myList: []
 		};
 
 		this.scrollRef = React.createRef();
@@ -26,16 +27,44 @@ export default class App extends React.Component {
 				}
 			}
 		});
+
+		this.addToMyList = this.addToMyList.bind(this)
+	}
+
+	addToMyList(rating) {
+		console.log(rating)
+		let currentUserRatings = this.state.myList
+			
+		let index = currentUserRatings.findIndex((e) => e.id === rating.id)
+		
+		if (rating.val === null) {
+			currentUserRatings.splice(index,1)
+			this.setState({
+				myList: currentUserRatings
+			})
+		}
+		else if (index === -1) {
+			currentUserRatings.push(rating)
+			this.setState({
+				myList: currentUserRatings
+			})
+		} else {
+			currentUserRatings[index] = rating;
+			this.setState({
+				myList: currentUserRatings
+			})
+		}
 	}
 
 	render() {
 		return (
 			<div id="content">
-				<header className="App-header">
-					My List
-				</header>
+				<div>
+					<h3>My List</h3>
+					{this.state.myList.map(movie => <div>{movie.id} : {movie.val}</div> )}
+				</div>
 				<div className="movies-container">
-					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100}/>)}
+					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} addToList={this.addToMyList }/>)}
 				</div>
 				<div id="load-delimiter" ref={this.scrollRef}/>
 			</div>
