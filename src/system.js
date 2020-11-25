@@ -44,6 +44,8 @@ export function calculateSimilarity() {
 		var commonMoviesOther = ratingsArray[i].filter(a => userRatings.some(b => a.id === b.id))
 		
 		// Sort by ID, otherwise the similarity score will not be correct
+		// Ratings from ratings.json are sorted by id already, only needs to be done 
+		// for the current user ratings
 		commonMoviesUser.sort(function(a, b) { 
 			return a.id - b.id  ||  a.name.localeCompare(b.name);
 		});
