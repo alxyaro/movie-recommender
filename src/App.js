@@ -10,7 +10,6 @@ export default class App extends React.Component {
 
 		this.state = {
 			movies: system.nextBatch(12),
-			myList: []
 		};
 
 		this.scrollRef = React.createRef();
@@ -27,47 +26,11 @@ export default class App extends React.Component {
 				}
 			}
 		});
-
-		this.addToMyList = this.addToMyList.bind(this)
-	}
-
-	addToMyList(movie) {
-		let currentUserRatings = this.state.myList
-			
-		let index = currentUserRatings.findIndex((e) => e.id === movie.id)
-		
-		if (!movie.userRating) {
-			currentUserRatings.splice(index,1)
-			this.setState({
-				myList: currentUserRatings
-			})
-		}
-		else if (index === -1) {
-			currentUserRatings.push(movie)
-			this.setState({
-				myList: currentUserRatings
-			})
-		} else {
-			currentUserRatings[index] = movie;
-			this.setState({
-				myList: currentUserRatings
-			})
-		}
-
-		system.calculateSimilarity(this.state.myList)
 	}
 
 	render() {
 		return (
 			<div id="content">
-				<div>
-					<h3>My List</h3>
-					<hr />
-					<div className="movies-container">
-						{this.state.myList.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} myList={true}/> )}
-					</div>
-					<hr />
-				</div>
 				<div>
 					<h3>Movies</h3>
 					<hr/>

@@ -7,8 +7,26 @@ export function init() {
 	// TODO
 }
 
+export function ratingUpdated(movie) {
+	let currentUserRatings = localStorage.getItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
+	console.log(currentUserRatings)	
 
-// Note: Managing this in state so re-render is triggered on click
+	let index = currentUserRatings.findIndex((e) => e.id === movie.id)
+	
+	if (!movie.userRating) {
+		currentUserRatings.splice(index,1)
+		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
+	}
+	else if (index === -1) {
+		currentUserRatings.push(movie)
+		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
+	} else {
+		currentUserRatings[index] = movie;
+		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
+	}
+	
+}
+
 export function calculateSimilarity(userRatings) {
 	if (!userRatings)
 		throw new Error("The current user has not rated any movies");
