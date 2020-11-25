@@ -31,7 +31,7 @@ export default class Rating extends React.Component {
 			userValue: rating
 		});
 
-		this.props.addToList({"id": this.props.movie.id, "val": rating, "time": Date.now()})
+		this.props.addToList(this.props.movie, rating)
 	}
 	render() {
 		const stars = [];

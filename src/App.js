@@ -31,25 +31,25 @@ export default class App extends React.Component {
 		this.addToMyList = this.addToMyList.bind(this)
 	}
 
-	addToMyList(rating) {
+	addToMyList(movie, rating) {
 		console.log(rating)
 		let currentUserRatings = this.state.myList
 			
-		let index = currentUserRatings.findIndex((e) => e.id === rating.id)
+		let index = currentUserRatings.findIndex((e) => e.id === movie.id)
 		
-		if (rating.val === null) {
+		if (rating === null) {
 			currentUserRatings.splice(index,1)
 			this.setState({
 				myList: currentUserRatings
 			})
 		}
 		else if (index === -1) {
-			currentUserRatings.push(rating)
+			currentUserRatings.push(movie)
 			this.setState({
 				myList: currentUserRatings
 			})
 		} else {
-			currentUserRatings[index] = rating;
+			currentUserRatings[index] = movie;
 			this.setState({
 				myList: currentUserRatings
 			})
@@ -61,10 +61,10 @@ export default class App extends React.Component {
 			<div id="content">
 				<div>
 					<h3>My List</h3>
-					{this.state.myList.map(movie => <div>{movie.id} : {movie.val}</div> )}
+					{this.state.myList.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} /> )}
 				</div>
 				<div className="movies-container">
-					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} addToList={this.addToMyList }/>)}
+					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} addToList={this.addToMyList} />)}
 				</div>
 				<div id="load-delimiter" ref={this.scrollRef}/>
 			</div>
