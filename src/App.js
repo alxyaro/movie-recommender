@@ -31,13 +31,12 @@ export default class App extends React.Component {
 		this.addToMyList = this.addToMyList.bind(this)
 	}
 
-	addToMyList(movie, rating) {
-		console.log(rating)
+	addToMyList(movie) {
 		let currentUserRatings = this.state.myList
 			
 		let index = currentUserRatings.findIndex((e) => e.id === movie.id)
 		
-		if (rating === null) {
+		if (!movie.userRating) {
 			currentUserRatings.splice(index,1)
 			this.setState({
 				myList: currentUserRatings
@@ -54,6 +53,8 @@ export default class App extends React.Component {
 				myList: currentUserRatings
 			})
 		}
+
+		system.calculateSimilarity(this.state.myList)
 	}
 
 	render() {
@@ -66,12 +67,6 @@ export default class App extends React.Component {
 						{this.state.myList.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} myList={true}/> )}
 					</div>
 					<hr />
-				</div>
-				<div>
-					<h3>Recommended for You</h3>
-					<hr/>
-						TO DO
-					<hr/>
 				</div>
 				<div>
 					<h3>Movies</h3>

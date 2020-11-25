@@ -7,14 +7,17 @@ export function init() {
 	// TODO
 }
 
-export function ratingUpdated(movie, rating) {
-	if (!movie)
-		throw new Error("Undefined movie");
-	// record user's rating for this movie (use movie.id)
-	// rating may be null (if rating was removed)
-	// otherwise, param rating is in [1,5]
-	// TODO
 
+// Note: Managing this in state so re-render is triggered on click
+export function calculateSimilarity(userRatings) {
+	if (!userRatings)
+		throw new Error("The current user has not rated any movies");
+	// Array of movie objects with user's rating will be passed
+	// Use user's ratings to calculate similarity scores with other 
+	// Users and make recommendations
+	var ratingsArray = Object.values(ratings[2])
+	console.log(ratingsArray)
+	console.log(userRatings)
 }
 
 export function nextBatch(size) {

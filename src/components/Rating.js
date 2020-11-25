@@ -26,12 +26,10 @@ export default class Rating extends React.Component {
 			this.props.movie.userRating = rating;
 		else
 			delete this.props.movie.userRating;
-		system.ratingUpdated(this.props?.movie || undefined, rating)
 		this.setState({
 			userValue: rating
 		});
-		let movieRating = this.props.movie
-		this.props.addToList(this.props.movie, rating)
+		this.props.addToList(this.props.movie)
 	}
 	render() {
 		const stars = [];
