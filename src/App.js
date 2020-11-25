@@ -32,7 +32,7 @@ export default class App extends React.Component {
 		return (
 			<div id="content">
 				<header className="App-header">
-					{/*<img src={logo} className="App-logo" alt="logo"/>*/}
+					My List
 				</header>
 				<div className="movies-container">
 					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100}/>)}

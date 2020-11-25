@@ -8,7 +8,7 @@ export default class Rating extends React.Component {
 			hoveringOn: undefined,
 			userValue: this.props.movie?.userRating || null
 		};
-		this.defaultValue = this.props.movie?.avgRating || 0;
+		this.defaultValue = 0;
 	}
 	onMouseEnter(pos) {
 		this.setState({
@@ -30,6 +30,15 @@ export default class Rating extends React.Component {
 		this.setState({
 			userValue: rating
 		});
+		// TO DO: Update user rating in userRating.json for this movie
+		if (localStorage.getItem('userRatings') !== null) {
+			let currentRatings = JSON.parse(localStorage.getItem('userRatings'))
+			currentRatings[1][this.props.movie.id] = {"val": rating, "time": Date.now()}
+			localStorage.setItem('userRatings', JSON.stringify(currentRatings))
+		}
+		else {
+			localStorage.setItem('userRatings', JSON.stringify({1: { [this.props.movie.id]: {"val": rating, "time": Date.now()}}}))
+		}
 	}
 	render() {
 		const stars = [];
