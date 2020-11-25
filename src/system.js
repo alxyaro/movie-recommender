@@ -38,15 +38,52 @@ export function calculateSimilarity() {
 	// Users and make recommendations
 	var i;
 	var ratingsArray = Object.values(ratings)
+	var usersArray = Object.keys(ratings)
 	for (i = 0; i < ratingsArray.length; i++) {
-		console.log("Ratings Array:", ratingsArray[i])
-		var commonMoviesOther = ratingsArray[i].filter(a => userRatings.some(b => a.id === b.id))
 		var commonMoviesUser = userRatings.filter(a => ratingsArray[i].some(b => a.id === b.id))
+		var commonMoviesOther = ratingsArray[i].filter(a => userRatings.some(b => a.id === b.id))
 		
-		var avgRatingOther = commonMoviesOther.reduce((acc,val) =>  { return acc + val.val },0) / commonMoviesOther.length
+		// Sort by ID, otherwise the similarity score will not be correct
+		commonMoviesUser.sort(function(a, b) { 
+			return a.id - b.id  ||  a.name.localeCompare(b.name);
+		});
+		
+		console.log("System.calculateSimilarity() user common movies:", commonMoviesUser)
+		console.log("System.calculateSimilarity() other common movies:", commonMoviesOther)
+	
 		var avgRatingUser = commonMoviesUser.reduce((acc,val) =>  { return acc + val.userRating },0) / commonMoviesUser.length
-		console.log("AVG RATING OTHER:", avgRatingOther)
-		console.log("AVG RATING OTHER:", avgRatingUser)
+		var avgRatingOther = commonMoviesOther.reduce((acc,val) =>  { return acc + val.val },0) / commonMoviesOther.length
+
+		console.log("System.calculateSimilarity() user average rating:", avgRatingUser)
+		console.log("System.calculateSimilarity() other average rating:", avgRatingOther)
+
+		var numUser = commonMoviesUser.map(e => e.userRating - avgRatingUser)
+		var numOther = commonMoviesOther.map(e => e.val - avgRatingOther)
+	
+		var numerator = 0;
+	
+		for (var j = 0; j < numOther.length; j++) {
+			numerator += numUser[j] * numOther[j]
+		}
+
+		console.log("System.calculateSimilarity() numerator:", numerator)
+
+		var denUser = commonMoviesUser.map(e => (e.userRating - avgRatingUser)**2)
+		var denOther = commonMoviesOther.map(e => (e.val - avgRatingOther)**2)
+		
+		denUser = denUser.reduce((acc,val) => { return acc + val },0)
+		denOther = denOther.reduce((acc,val) => { return acc + val },0)
+		
+		var denominator = Math.sqrt(denOther*denUser)
+
+		console.log("System.calculateSimilarity() denominator:", denominator)
+
+		var sim = numerator/denominator
+		if (!sim) {
+			sim = 0;
+		}
+
+		console.log(`System.calculateSimilarity() Similarity between current user and user #${usersArray[i]}: ${sim}`)
 	}
 	
 }
