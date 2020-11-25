@@ -33,32 +33,22 @@ export function calculateSimilarity() {
 	if (!userRatings)
 		throw new Error("The current user has not rated any movies");
 	
-		// Array of movie objects with user's rating will be passed
+	// Array of movie objects with user's rating will be passed
 	// Use user's ratings to calculate similarity scores with other 
 	// Users and make recommendations
-
-	let currUserMoviesRated = userRatings.map(e => e.id)
-	
-	// Average rating for current user
-	var avgCurrUserMoviesRated = userRatings.reduce(function(acc, movie) {
-		return acc + movie.userRating
-	},0) / userRatings.length
-
-	let usersArray = Object.keys(ratings)
-	let usersRatingsArray = Object.values(ratings)
-	console.log("Array of user ID's:", usersArray)
-	console.log("Array of user Ratings:", usersRatingsArray)
-	var moviesRated = [];
-
-
 	var i;
-	for (i = 0; i < usersArray.length; i++) {
-		// For each user and their ratings, get intersection with current user
-		moviesRated = Object.keys(usersRatingsArray[i])
-		// Common movies will be an intersection of movies that both users have rated in common
-		let commonMovies = moviesRated.filter((e) => currUserMoviesRated.indexOf(e) !== -1)
+	var ratingsArray = Object.values(ratings)
+	for (i = 0; i < ratingsArray.length; i++) {
+		console.log("Ratings Array:", ratingsArray[i])
+		var commonMoviesOther = ratingsArray[i].filter(a => userRatings.some(b => a.id === b.id))
+		var commonMoviesUser = userRatings.filter(a => ratingsArray[i].some(b => a.id === b.id))
 		
+		var avgRatingOther = commonMoviesOther.reduce((acc,val) =>  { return acc + val.val },0) / commonMoviesOther.length
+		var avgRatingUser = commonMoviesUser.reduce((acc,val) =>  { return acc + val.userRating },0) / commonMoviesUser.length
+		console.log("AVG RATING OTHER:", avgRatingOther)
+		console.log("AVG RATING OTHER:", avgRatingUser)
 	}
+	
 }
 
 export function nextBatch(size) {
