@@ -61,7 +61,11 @@ export default class App extends React.Component {
 			<div id="content">
 				<div>
 					<h3>My List</h3>
-					{this.state.myList.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} /> )}
+					<hr />
+					<div className="movies-container">
+						{this.state.myList.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} myList={true}/> )}
+					</div>
+					<hr />
 				</div>
 				<div className="movies-container">
 					{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} addToList={this.addToMyList} />)}

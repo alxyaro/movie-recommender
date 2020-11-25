@@ -30,7 +30,7 @@ export default class Rating extends React.Component {
 		this.setState({
 			userValue: rating
 		});
-
+		let movieRating = this.props.movie
 		this.props.addToList(this.props.movie, rating)
 	}
 	render() {
