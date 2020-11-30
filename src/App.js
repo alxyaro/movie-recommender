@@ -35,7 +35,7 @@ export default class App extends React.Component {
 					<h3>Movies</h3>
 					<hr/>
 					<div className="movies-container">
-						{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} addToList={this.addToMyList} />)}
+						{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} />)}
 					</div>
 					<hr/>
 				</div>
