@@ -22,9 +22,8 @@ export default class MoviesPage extends React.Component {
 	componentDidMount() {
 		batchNum = 1;
 		this.setState({
-			movies: system.nextBatch(batchNum)
+			movies: system.nextBatch(batchNum++)
 		})
-		batchNum += 1;
 	};
 
 	componentWillUnmount() {
@@ -37,8 +36,7 @@ export default class MoviesPage extends React.Component {
 		if (reachedPos-150 > this.scrollRef.current.getBoundingClientRect().y) {
 			if (Date.now()-lastLoad > 100) {
 				lastLoad = Date.now();
-				this.state.movies.push(...system.nextBatch(batchNum));
-				batchNum += 1;
+				this.state.movies.push(...system.nextBatch(batchNum++));
 				this.setState({
 					movies: this.state.movies
 				});
