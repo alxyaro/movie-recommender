@@ -23,6 +23,31 @@ body {
 	box-sizing: border-box;
 }
 
+.page-selector {
+	display: flex;
+	& > button {
+		border: 1px solid transparent;
+		border-radius: 10px;
+		background-color: transparent;
+		height: 35px;
+		min-width: 50px;
+		color: #eee;
+		font-size: 25px;
+		position: relative;
+		transition: 1s;
+		-webkit-tap-highlight-color: transparent;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		padding: 5px;
+		margin: 5px;
+	}
+	& > button:hover {
+		border: 1px solid white;
+	}
+}
+
 .movies-container {
 	display: flex;
 	flex-wrap: wrap;
