@@ -25,7 +25,10 @@ body {
 
 .page-selector {
 	display: flex;
-	& > button {
+	& > a {
+		text-decoration: none;
+	}
+	& > a > button {
 		border: 1px solid transparent;
 		border-radius: 10px;
 		background-color: transparent;
@@ -43,7 +46,7 @@ body {
 		padding: 5px;
 		margin: 5px;
 	}
-	& > button:hover {
+	& > a > button:hover {
 		border: 1px solid white;
 	}
 }

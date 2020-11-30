@@ -1,6 +1,10 @@
 //import logo from './logo.svg';
 import React from "react";
-import Movie from "./components/Movie";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
+// Pages
+import MoviesPage from './pages/moviesPage';
+import FavouritesPage from './pages/favouritesPage';
 
 import * as system from "./system";
 
@@ -36,18 +40,19 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div id="content">
-				<div>
+				<Router>
 					<div className="page-selector">
-						<button>Movies</button>
-						<button>Favourites</button>
-						<button>Recommended</button>
+						<Link to="/"><button className="page-select">Movies</button></Link>
+						<Link to="/favourites"><button className="page-select">Favourites</button></Link>
+						<Link to="/recommented"><button className="page-select">Recommended</button></Link>
 					</div>
 					<hr/>
 					<div className="movies-container">
-						{this.state.movies.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} />)}
+						<Route exact path="/" component={MoviesPage} />
+						<Route exact path="/favourites" component={FavouritesPage} />
 					</div>
 					<hr/>
-				</div>
+				</Router>
 				<div id="load-delimiter" ref={this.scrollRef}/>
 			</div>
 		);
