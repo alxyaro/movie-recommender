@@ -97,9 +97,9 @@ export function calculateSimilarity() {
 	return simScores
 }
 
-export function nextBatch(size) {
+export function nextBatch(batchNum) {
 	// returns an array of the next `size` recommended movies
 	// this function should not return previously returned movies
 	// TODO
-	return movies.slice(0, size); // FIXME this is just for testing
+	return movies.slice((batchNum-1)*12, batchNum*12); // FIXME this is just for testing
 }

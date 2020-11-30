@@ -8,18 +8,23 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 
+		let batchNum = 1;
+
 		this.state = {
-			movies: system.nextBatch(12),
+			movies: system.nextBatch(batchNum),
 		};
+		batchNum += 1;
 
 		this.scrollRef = React.createRef();
 		let lastLoad = 0
+		
 		window.addEventListener("scroll", e => {
 			let reachedPos = window.innerHeight;
 			if (reachedPos-150 > this.scrollRef.current.getBoundingClientRect().y) {
 				if (Date.now()-lastLoad > 100) {
 					lastLoad = Date.now();
-					this.state.movies.push(...system.nextBatch(12));
+					this.state.movies.push(...system.nextBatch(batchNum));
+					batchNum += 1;
 					this.setState({
 						movies: this.state.movies
 					});
