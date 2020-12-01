@@ -3,10 +3,7 @@ import ReactDOM from 'react-dom';
 import './styles.scss';
 import App from './App';
 import reportWebVitals from './util/reportWebVitals';
-
-import * as system from './system';
-
-system.init();
+import './system'; // load module
 
 ReactDOM.render(
 	<App/>,

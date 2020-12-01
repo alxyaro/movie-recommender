@@ -1,14 +1,120 @@
-// TODO do all the recommender system initialization & calculation logic here
 const movies = require("./content/movies.json");
 const ratings = require("./content/ratings.json");
-var ratingsArray;
-var usersArray;
 
-export function init() {
-	// load dataset, process it, etc...
-	// TODO
-	ratingsArray = Object.values(ratings)
-	usersArray = Object.keys(ratings)
+// INITIALIZATION LOGIC
+const movieIdsToMovies = {};
+for (let movie of movies)
+	movieIdsToMovies[movie.id] = movie;
+
+const avgUserRatingMap = {};
+for (let userId in ratings) {
+	const ratedMovies = Object.values(ratings[userId]);
+	if (ratedMovies.length === 0) // shouldn't be the case, but just in case
+		continue;
+	avgUserRatingMap[userId] = ratedMovies.reduce((acc, rating) => acc+rating) / ratedMovies.length;
+}
+
+
+let userRatingsObj = {}
+
+let cachedRatedMovies = null;
+let cachedRecommendedMovies = null;
+
+
+function calcPearsonCorrelationCoefficient(obj1, avg1, obj2, avg2) {
+	// it is most optimal to iterate the smallest array when we need the intersection
+	let switchOrder = Object.keys(obj2).length < Object.keys(obj1).length;
+	if (switchOrder) {
+		let tempObj1 = obj1;
+		let tempAvg1 = avg1;
+		obj1 = obj2;
+		avg1 = avg2;
+		obj2 = tempObj1;
+		avg2 = tempAvg1;
+	}
+
+	// the following 3 variables are for the pearson correlation coefficient math
+	let numeratorSum = 0;
+	let denominatorSum1 = 0;
+	let denominatorSum2 = 0;
+
+	let totalComparedRatings = 0;
+	for (let movieId in obj1) {
+		if (obj2.hasOwnProperty(movieId)) {
+			// these are the adjusted ratings
+			const rating1 = obj1[movieId]-avg1;
+			const rating2 = obj2[movieId]-avg2;
+
+			numeratorSum += rating1*rating2;
+			denominatorSum1 += Math.pow(rating1, 2);
+			denominatorSum2 += Math.pow(rating2, 2);
+
+			totalComparedRatings++;
+			if (totalComparedRatings >= 50)
+				break;
+		}
+	}
+
+	if (denominatorSum1 === 0 || denominatorSum2 === 0) return 0;
+	const result = numeratorSum/Math.sqrt(denominatorSum1*denominatorSum2);
+	return Math.min(result, 1); // sometimes, the result can have precision error & be slightly larger than 1
+}
+
+function calcEstimatedRating(similarities, movieId) {
+	// this is done using weighted-sum aggregation
+	let numeratorSum = 0;
+	let denominatorSum = 0;
+	for (let simObj of similarities) {
+		const userId = simObj.userId;
+		const ratingData = ratings[userId];
+		if (ratingData.hasOwnProperty(movieId)) {
+			numeratorSum += simObj.sim * ratingData[movieId];
+			denominatorSum += simObj.sim;
+		}
+	}
+	return denominatorSum > 0 ? numeratorSum/denominatorSum : 0;
+}
+
+function calcRecommendedMovies() {
+	// calculate similarities using pearson correlation coefficient
+	const userRatings = Object.values(userRatingsObj);
+	if (userRatings.length === 0)
+		return [];
+
+	let avgUserRating = userRatings.reduce((acc, rating) => acc+rating) / userRatings.length;
+
+	let roundedAvgUserRating = Math.round(avgUserRating);
+	if (userRatings.every(rating => rating === roundedAvgUserRating))
+		return []; // no enough rating variety (all ratings are the same)
+
+	let similarities = [];
+
+	for (let userId in ratings) {
+		const altUserRatingsObj = ratings[userId];
+		let avgAltUserRating = avgUserRatingMap[userId];
+		if (!avgAltUserRating)
+			continue;
+
+		const similarity = calcPearsonCorrelationCoefficient(userRatingsObj, avgUserRating, altUserRatingsObj, avgAltUserRating);
+		if (similarity > 0)
+			similarities.push({userId: userId, sim: similarity});
+	}
+
+	similarities.sort((a, b) => b.sim-a.sim); // sort by desc similarities
+	// console.log("similarities:", similarities);
+	similarities = similarities.slice(0, 20); // only use top 20 similarities
+
+	const result = [];
+	for (let movie of movies) {
+		delete movie.match;
+		if (!movie.userRating) {
+			result.push(movie);
+			movie.match = calcEstimatedRating(similarities, movie.id) / 5;
+		}
+	}
+	result.sort((a, b) => b.match-a.match);
+	// console.log("scores:", result.map(movie => movie.match));
+	return result;
 }
 
 export function getAllMovies() {
@@ -16,147 +122,28 @@ export function getAllMovies() {
 }
 
 export function getRatedMovies() {
-	return []; // FIXME implement
+	if (!cachedRatedMovies) {
+		cachedRatedMovies = Object.keys(userRatingsObj).map(id => movieIdsToMovies[id]).sort((a, b) => b.userRating-a.userRating || a.title.localeCompare(b.title));
+	}
+	return cachedRatedMovies;
 }
 
 export function getRecommendedMovies() {
-	return []; // FIXME implement
-}
-
-export function getCurrentUserRatings() {
-	let currentUserRatings = localStorage.getItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
-	return currentUserRatings
-}
-
-export function ratingUpdated(movie) {
-	let currentUserRatings = getCurrentUserRatings()
-	console.log(currentUserRatings)	
-
-	let index = currentUserRatings.findIndex((e) => e.id === movie.id)
-	
-	if (!movie.userRating) {
-		currentUserRatings.splice(index,1)
-		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
+	if (!cachedRecommendedMovies) {
+		cachedRecommendedMovies = calcRecommendedMovies();
 	}
-	else if (index === -1) {
-		currentUserRatings.push(movie)
-		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
+	return cachedRecommendedMovies;
+}
+
+export function ratingUpdated(movie, rating) {
+	if ((movie.userRating || null) !== rating)
+		throw new Error("Something is out of sync (movie.userRating != rating)");
+	if (rating) {
+		userRatingsObj[movie.id] = rating;
 	} else {
-		currentUserRatings[index] = movie;
-		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
+		delete userRatingsObj[movie.id];
 	}
-
-	//calculateMatch()
-	var sim = calculateSimilarity()
-	console.log(sim)
-}
-
-export function calculateMatch(){
-	var currentUserRatings = getCurrentUserRatings()
-	if (!currentUserRatings)
-		throw new Error("The current user has not rated any movies");
-	var simScores = calculateSimilarity()
-	var simScoresOrdered = simScores.slice().sort(function(a, b){return b - a});
-	simScoresOrdered = simScoresOrdered.slice(0,10) //Get top 10 highest similarity scores
-	console.log(simScoresOrdered)
-	var simUsers = [] //Will contain the userIDs of the top 10 most similar users
-	for (var i = 0; i < simScoresOrdered.length; i++) {
-		simUsers.push(simScores.indexOf(simScoresOrdered[i])+2) //Find the users corresponding to the top 10 sim scores
-	}
-	
-	var ratingsArr = ratingsArray.slice() //Create copy of ratingsArray bc we will be making changes
-	/*The idea here is to loop through all the ratings and remove the ratings for any movie which has already been rated by the user
-	I'm confused about how these ratings are being stored in their respective data structures so this section probably won't run
-	I think that we can avoid these for loops by sending a movie object right to this function since we are calling it in ratingUpdated()
-	but I dont want to fuck up this program more than I already did so I'm just goint to leave this for now
-	*/
-	var userRatingIDs = []
-	var remainingRatings = []
-	for (var i = 0; i < currentUserRatings.length; i++){
-		userRatingIDs.push(currentUserRatings[i].id)
-	}
-	for (var i = 0; i < ratingsArr.length; i++){
-		var arr = ratingsArr[i]
-		for (var j = 0; j < arr.length; j++){
-			for (var k = 0; k < currentUserRatings; k++){
-				if (!userRatingIDs.includes(arr[j].id)){
-					remainingRatings.concat([arr[j]])
-				}
-			}
-		}
-	}
-	
-	// arr1.concat(arr2)
-	//let currentUserRatings = localStorage.setItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
-}
-
-export function calculateSimilarity() {
-	let userRatings = localStorage.getItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
-	if (!userRatings)
-		throw new Error("The current user has not rated any movies");
-	
-	// Array of movie objects with user's rating will be passed
-	// Use user's ratings to calculate similarity scores with other 
-	// Users and make recommendations
-	var simScores = [];
-	for (var i = 0; i < ratingsArray.length; i++) {
-		var commonMoviesUser = userRatings.filter(a => ratingsArray[i].some(b => a.id === b.id))
-		var commonMoviesOther = ratingsArray[i].filter(a => userRatings.some(b => a.id === b.id))
-		
-		// Sort by ID, otherwise the similarity score will not be correct
-		commonMoviesUser.sort(function(a, b) { 
-			return a.id - b.id  ||  a.name.localeCompare(b.name);
-		});
-		commonMoviesOther.sort(function(a, b) { 
-			return a.id - b.id  ||  a.name.localeCompare(b.name);
-		});
-		
-		console.log("System.calculateSimilarity() user common movies:", commonMoviesUser)
-		console.log("System.calculateSimilarity() other common movies:", commonMoviesOther)
-	
-		var avgRatingUser = commonMoviesUser.reduce((acc,val) =>  { return acc + val.userRating },0) / commonMoviesUser.length
-		var avgRatingOther = commonMoviesOther.reduce((acc,val) =>  { return acc + val.val },0) / commonMoviesOther.length
-
-		console.log("System.calculateSimilarity() user average rating:", avgRatingUser)
-		console.log("System.calculateSimilarity() other average rating:", avgRatingOther)
-
-		var numUser = commonMoviesUser.map(e => e.userRating - avgRatingUser)
-		var numOther = commonMoviesOther.map(e => e.val - avgRatingOther)
-	
-		var numerator = 0;
-	
-		for (var j = 0; j < numOther.length; j++) {
-			numerator += numUser[j] * numOther[j]
-		}
-
-		console.log("System.calculateSimilarity() numerator:", numerator)
-
-		var denUser = commonMoviesUser.map(e => (e.userRating - avgRatingUser)**2)
-		var denOther = commonMoviesOther.map(e => (e.val - avgRatingOther)**2)
-		
-		denUser = denUser.reduce((acc,val) => { return acc + val },0)
-		denOther = denOther.reduce((acc,val) => { return acc + val },0)
-		
-		var denominator = Math.sqrt(denOther*denUser)
-
-		console.log("System.calculateSimilarity() denominator:", denominator)
-
-		var sim = numerator/denominator
-		if (!sim) {
-			sim = 0;
-		}
-		
-		console.log(`System.calculateSimilarity() Similarity between current user and user #${usersArray[i]}: ${sim}`)
-		
-		simScores.push(sim)
-	}
-
-	return simScores
-}
-
-export function nextBatch(batchNum) {
-	// returns an array of the next `size` recommended movies
-	// this function should not return previously returned movies
-	// TODO
-	return movies.slice((batchNum-1)*12, batchNum*12); // FIXME this is just for testing
+	// invalid caches
+	cachedRatedMovies = null;
+	cachedRecommendedMovies = null;
 }

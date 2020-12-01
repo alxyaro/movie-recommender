@@ -19,6 +19,7 @@ export default class MovieListing extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
+		// TODO if list prop changed, replace all loadedList items will the newer stuff
 		this.tryLoad();
 	}
 
@@ -43,7 +44,7 @@ export default class MovieListing extends Component {
 		return (
 			<div>
 				<div className="movies-container">
-					{this.state.loadedList.map(movie => <Movie key={movie.id} movie={movie}/>)}
+					{this.state.loadedList.map(movie => <Movie key={movie.id} movie={movie} showMatchPct={this.props.showMatchPct || false}/>)}
 				</div>
 				<div ref={this.loadPointRef} style={{height: 1, marginTop: -420 /* 400 + 20 buffer */}}/>
 			</div>

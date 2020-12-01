@@ -9,10 +9,10 @@ export default class RecommendedPage extends React.Component {
 		return <div>
 			{movies.length === 0 ?
 				<p className="caption">
-					Give a rating in the browse tab to find your next pick for movie night!<br/>
+					Give a variety of ratings in the browse tab to get some recommendations!<br/>
 					Our algorithm will recommend movies based on your past ratings in relation to the taste of other users.
 				</p> :
-				<MovieListing list={movies}/>
+				<MovieListing list={movies} showMatchPct={true}/>
 			}
 		</div>;
 	}
