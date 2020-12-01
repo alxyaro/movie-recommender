@@ -21,7 +21,7 @@ export default class Movie extends React.Component {
 			<div style={{backgroundImage: "url(https://image.tmdb.org/t/p/w400/"+this.props.movie.tmdbImg+")"}}>
 				<div className="info">
 					<div className="stats">
-						<div className="similarity">98% match</div>
+						<div className="similarity">{this.props.match}</div>
 						{this.props.myList ? "" : <Rating movie={this.props.movie} addToList={this.props.addToList}/>}
 					</div>
 					<h2>

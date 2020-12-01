@@ -17,7 +17,7 @@ export function getCurrentUserRatings() {
 }
 
 export function ratingUpdated(movie) {
-	let currentUserRatings = localStorage.getItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
+	let currentUserRatings = getCurrentUserRatings()
 	console.log(currentUserRatings)	
 
 	let index = currentUserRatings.findIndex((e) => e.id === movie.id)
@@ -34,8 +34,48 @@ export function ratingUpdated(movie) {
 		localStorage.setItem('userRatings', JSON.stringify(currentUserRatings))
 	}
 
+	//calculateMatch()
 	var sim = calculateSimilarity()
 	console.log(sim)
+}
+
+export function calculateMatch(){
+	var currentUserRatings = getCurrentUserRatings()
+	if (!currentUserRatings)
+		throw new Error("The current user has not rated any movies");
+	var simScores = calculateSimilarity()
+	var simScoresOrdered = simScores.slice().sort(function(a, b){return b - a});
+	simScoresOrdered = simScoresOrdered.slice(0,10) //Get top 10 highest similarity scores
+	console.log(simScoresOrdered)
+	var simUsers = [] //Will contain the userIDs of the top 10 most similar users
+	for (var i = 0; i < simScoresOrdered.length; i++) {
+		simUsers.push(simScores.indexOf(simScoresOrdered[i])+2) //Find the users corresponding to the top 10 sim scores
+	}
+	
+	var ratingsArr = ratingsArray.slice() //Create copy of ratingsArray bc we will be making changes
+	/*The idea here is to loop through all the ratings and remove the ratings for any movie which has already been rated by the user
+	I'm confused about how these ratings are being stored in their respective data structures so this section probably won't run
+	I think that we can avoid these for loops by sending a movie object right to this function since we are calling it in ratingUpdated()
+	but I dont want to fuck up this program more than I already did so I'm just goint to leave this for now
+	*/
+	var userRatingIDs = []
+	var remainingRatings = []
+	for (var i = 0; i < currentUserRatings.length; i++){
+		userRatingIDs.push(currentUserRatings[i].id)
+	}
+	for (var i = 0; i < ratingsArr.length; i++){
+		var arr = ratingsArr[i]
+		for (var j = 0; j < arr.length; j++){
+			for (var k = 0; k < currentUserRatings; k++){
+				if (!userRatingIDs.includes(arr[j].id)){
+					remainingRatings.concat([arr[j]])
+				}
+			}
+		}
+	}
+	
+	// arr1.concat(arr2)
+	//let currentUserRatings = localStorage.setItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
 }
 
 export function calculateSimilarity() {
@@ -59,14 +99,14 @@ export function calculateSimilarity() {
 			return a.id - b.id  ||  a.name.localeCompare(b.name);
 		});
 		
-		// console.log("System.calculateSimilarity() user common movies:", commonMoviesUser)
-		// console.log("System.calculateSimilarity() other common movies:", commonMoviesOther)
+		console.log("System.calculateSimilarity() user common movies:", commonMoviesUser)
+		console.log("System.calculateSimilarity() other common movies:", commonMoviesOther)
 	
 		var avgRatingUser = commonMoviesUser.reduce((acc,val) =>  { return acc + val.userRating },0) / commonMoviesUser.length
 		var avgRatingOther = commonMoviesOther.reduce((acc,val) =>  { return acc + val.val },0) / commonMoviesOther.length
 
-		// console.log("System.calculateSimilarity() user average rating:", avgRatingUser)
-		// console.log("System.calculateSimilarity() other average rating:", avgRatingOther)
+		console.log("System.calculateSimilarity() user average rating:", avgRatingUser)
+		console.log("System.calculateSimilarity() other average rating:", avgRatingOther)
 
 		var numUser = commonMoviesUser.map(e => e.userRating - avgRatingUser)
 		var numOther = commonMoviesOther.map(e => e.val - avgRatingOther)
@@ -77,7 +117,7 @@ export function calculateSimilarity() {
 			numerator += numUser[j] * numOther[j]
 		}
 
-		// console.log("System.calculateSimilarity() numerator:", numerator)
+		console.log("System.calculateSimilarity() numerator:", numerator)
 
 		var denUser = commonMoviesUser.map(e => (e.userRating - avgRatingUser)**2)
 		var denOther = commonMoviesOther.map(e => (e.val - avgRatingOther)**2)
@@ -87,14 +127,14 @@ export function calculateSimilarity() {
 		
 		var denominator = Math.sqrt(denOther*denUser)
 
-		// console.log("System.calculateSimilarity() denominator:", denominator)
+		console.log("System.calculateSimilarity() denominator:", denominator)
 
 		var sim = numerator/denominator
 		if (!sim) {
 			sim = 0;
 		}
 		
-		// console.log(`System.calculateSimilarity() Similarity between current user and user #${usersArray[i]}: ${sim}`)
+		console.log(`System.calculateSimilarity() Similarity between current user and user #${usersArray[i]}: ${sim}`)
 		
 		simScores.push(sim)
 	}
