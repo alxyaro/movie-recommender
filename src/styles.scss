@@ -6,6 +6,7 @@ html {
 	background: black repeat center center fixed;
 	background-image: url("./content/bg.png"), linear-gradient(#4c3f4b, #251e25);
 	background-size: auto;
+	overflow-y: scroll;
 }
 
 body {
