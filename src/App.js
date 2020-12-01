@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
 
 // Pages
-import MoviesPage from './pages/MoviesPage';
-import FavouritesPage from './pages/FavouritesPage';
+import BrowsePage from './pages/BrowsePage';
+import RatedPage from './pages/RatedPage';
 import RecommendedPage from './pages/RecommendedPage';
 
 export default class App extends React.Component {
@@ -32,14 +32,14 @@ export default class App extends React.Component {
 			<Router>
 				<nav className={this.state.navHidden ? "hidden" : ""}>
 					<div className="wrapper">
-						<NavLink exact={true} to="/"><button className="page-select">Movies</button></NavLink>
-						<NavLink to="/favourites"><button className="page-select">Favourites</button></NavLink>
+						<NavLink exact={true} to="/"><button className="page-select">Browse</button></NavLink>
+						<NavLink to="/rated"><button className="page-select">Rated</button></NavLink>
 						<NavLink to="/recommended"><button className="page-select">Recommended</button></NavLink>
 					</div>
 				</nav>
 				<div className="wrapper" style={{marginTop: 70}}>
-					<Route exact path="/" component={MoviesPage} />
-					<Route exact path="/favourites" component={FavouritesPage} />
+					<Route exact path="/" component={BrowsePage} />
+					<Route exact path="/rated" component={RatedPage} />
 					<Route exact path="/recommended" component={RecommendedPage} />
 				</div>
 			</Router>

@@ -3,7 +3,7 @@ import Movie from "../components/Movie";
 
 import * as system from "../system";
 
-export default class FavouritesPage extends React.Component {
+export default class RatedPage extends React.Component {
 	constructor(props) {
         super(props);
 
