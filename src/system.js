@@ -73,7 +73,8 @@ function calcEstimatedRating(similarities, movieId) {
 			denominator += Math.abs(simObj.sim); // abs value for good measure & formula formality; negative similarities are discarded
 		}
 	}
-	return denominator > 0 ? numerator/denominator : 0;
+	if (denominator === 0) return 0;
+	return Math.min(numerator/denominator, 5); // once again, sometimes, the result can have precision error & be slightly larger than 5; so cap it
 }
 
 function calcRecommendedMovies() {
