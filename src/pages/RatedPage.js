@@ -1,25 +1,18 @@
 import React from "react";
-import Movie from "../components/Movie";
 
 import * as system from "../system";
+import MovieListing from '../components/MovieListing';
 
 export default class RatedPage extends React.Component {
-	constructor(props) {
-        super(props);
-
-		this.state = {
-			favourites: system.getCurrentUserRatings(),
-		};
-	}
-
 	render() {
-		return (
-			<div>
-				{this.state.favourites.length === 0 ? <p className="caption">To add to Favourites, give a rating to a movie in the movies tab!</p> : ""}
-				<div className="movies-container">
-					{this.state.favourites.length > 0 ? this.state.favourites.map((movie, i) => <Movie key={movie.id} movie={movie} fadein={(i % 12)*100} />) : ""}
-				</div>
-			</div>
-		);
+		const movies = system.getRatedMovies();
+		return <div>
+			{movies.length === 0 ?
+				<p className="caption">
+					You haven't rated any movies!<br/>Give some ratings within the the browse tab first!
+				</p> :
+				<MovieListing list={system.getRatedMovies()}/>
+			}
+		</div>
 	}
 }

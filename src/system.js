@@ -15,6 +15,14 @@ export function getAllMovies() {
 	return movies;
 }
 
+export function getRatedMovies() {
+	return []; // FIXME implement
+}
+
+export function getRecommendedMovies() {
+	return []; // FIXME implement
+}
+
 export function getCurrentUserRatings() {
 	let currentUserRatings = localStorage.getItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
 	return currentUserRatings
