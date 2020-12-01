@@ -28,7 +28,6 @@ p.caption {
 
 .wrapper {
 	width: 100%;
-	max-width: 1116px; // perfectly fits 4 movies
 	margin: 0 auto;
 	padding: 0 10px;
 	box-sizing: border-box;
@@ -94,7 +93,7 @@ nav {
 .movies-container {
 	display: flex;
 	flex-wrap: wrap;
-	// justify-content: center;
+	justify-content: center;
 
 	.movie {
 		padding: 10px;
@@ -102,11 +101,6 @@ nav {
 		transform: scale(0.97);
 		transform-origin: 50% 90%;
 		transition: transform 200ms, opacity 300ms;
-
-		&.hidden {
-			opacity: 0;
-			transform: scale(0.5);
-		}
 
 		&:hover {
 			transform: scale(1);

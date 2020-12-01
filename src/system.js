@@ -11,6 +11,10 @@ export function init() {
 	usersArray = Object.keys(ratings)
 }
 
+export function getAllMovies() {
+	return movies;
+}
+
 export function getCurrentUserRatings() {
 	let currentUserRatings = localStorage.getItem('userRatings') ? JSON.parse(localStorage.getItem('userRatings')) : []
 	return currentUserRatings
