@@ -16,7 +16,7 @@ for (let userId in ratingsMap) {
 
 
 let userRatingsObj = {}
-const storedRatings = localStorage.getItem("ratings");
+const storedRatings = sessionStorage.getItem("ratings");
 if (storedRatings) {
 	try {
 		userRatingsObj = JSON.parse(storedRatings);
@@ -135,7 +135,7 @@ function calcRecommendedMovies() {
 		}
 	}
 	result.sort((a, b) => b.match-a.match); // sort movies by descending matches (highest matched movies go first)
-	// console.log("scores:", result.map(movie => movie.match));
+	console.log("scores:", result.map(movie => movie.match));
 	return result; // enjoy
 }
 
@@ -171,6 +171,6 @@ export function ratingUpdated(movie, rating) {
 	cachedRatedMovies = null;
 	cachedRecommendedMovies = null;
 
-	// store ratings in localStorage
-	localStorage.setItem("ratings", JSON.stringify(userRatingsObj));
+	// store ratings in sessionStorage
+	sessionStorage.setItem("ratings", JSON.stringify(userRatingsObj));
 }

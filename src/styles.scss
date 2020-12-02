@@ -175,10 +175,29 @@ nav {
 				background: linear-gradient(transparent, rgba(black, 0.9));
 				text-align: center;
 
+				.info-link {
+					color: #a2d7e5;
+					opacity: 0;
+					font-size: 12px;
+					transition: 300ms;
+					margin-bottom: 10px;
+					display: inline-block;
+					text-shadow: 0 0 10px black;
+					padding: 4px 6px;
+					text-decoration: none;
+					background: rgba(black, 0.6);
+					border-radius: 5px;
+				}
+
 				h2 {
 					margin-top: 0;
 					margin-bottom: 0;
 					font-size: 20px;
+
+					small {
+						opacity: 0.7;
+						font-size: 70%;
+					}
 				}
 
 				.stats {
@@ -192,6 +211,10 @@ nav {
 						font-weight: 500;
 					}
 				}
+			}
+
+			&:hover .info-link {
+				opacity: 1;
 			}
 		}
 	}
