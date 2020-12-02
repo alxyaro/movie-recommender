@@ -118,7 +118,7 @@ function calcRecommendedMovies() {
 		if (!movie.userRating) {
 			// calculate the estimated rating for this movie
 			const estimatedRating = calcEstimatedRating(similarities, movie.id);
-			if (estimatedRating) {
+			if (estimatedRating && estimatedRating >= 2.5) {
 				// then, map this from [1, 5] to [0, 1], so it's a "recommendation match percentage"
 				movie.match = (estimatedRating-1) / 4;
 				result.push(movie);

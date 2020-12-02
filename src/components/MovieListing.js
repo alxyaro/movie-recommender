@@ -54,13 +54,15 @@ export default class MovieListing extends Component {
 				loadedList: this.list.slice(0, length)
 			});
 		}
+		if (this.props.onRatingUpdate)
+			this.props.onRatingUpdate();
 	}
 
 	render() {
 		return (
 			<div>
 				<div className="movies-container">
-					{this.state.loadedList.map(movie => <Movie key={movie.id} movie={movie} showMatchPct={this.props.showMatchPct || false}/>)}
+					{this.state.loadedList.map(movie => <Movie key={movie.id} movie={movie} showRelevancy={this.props.showRelevancy || false}/>)}
 				</div>
 				<div ref={this.loadPointRef} style={{height: 1, marginTop: -420 /* 400 + 20 buffer */}}/>
 			</div>

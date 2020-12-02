@@ -17,7 +17,7 @@ export default class RecommendedPage extends React.Component {
 					Give a variety of ratings in the browse tab to get some recommendations!<br/>
 					Our algorithm will recommend movies based on your past ratings in relation to the taste of other users.
 				</p> :
-				<MovieListing list={this.movies} showMatchPct={true}/>
+				<MovieListing list={this.movies} showRelevancy={true}/>
 			}
 		</div>;
 	}
