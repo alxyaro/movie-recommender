@@ -30,6 +30,7 @@ export default class Rating extends React.Component {
 		this.setState({
 			userValue: rating
 		});
+		document.dispatchEvent(new Event("rating-update"));
 	}
 	render() {
 		const stars = [];

@@ -10,33 +10,49 @@ export default class MovieListing extends Component {
 			loadedList: []
 		};
 
+		this.list = typeof this.props.list === "function" ? this.props.list() : this.props.list;
+
 		this.tryLoad = this.tryLoad.bind(this);
+		this.onRatingUpdateEvent = this.onRatingUpdateEvent.bind(this);
 	}
 
 	componentDidMount() {
 		document.addEventListener("scroll", this.tryLoad);
+		document.addEventListener("rating-update", this.onRatingUpdateEvent);
 		this.tryLoad();
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		// TODO if list prop changed, replace all loadedList items will the newer stuff
 		this.tryLoad();
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener("scroll", this.tryLoad);
+		document.removeEventListener("rating-update", this.onRatingUpdateEvent);
 	}
 
 	tryLoad() {
 		// console.log(window.innerHeight, this.loadPointRef.current.getBoundingClientRect().y)
 		if (window.innerHeight >= this.loadPointRef.current.getBoundingClientRect().y) {
 			let length = this.state.loadedList.length;
-			if (length < this.props.list.length) {
-				this.state.loadedList.push(...this.props.list.slice(length, length+15));
+			if (length < this.list.length) {
+				this.state.loadedList.push(...this.list.slice(length, length+15));
 				this.setState({
 					loadedList: this.state.loadedList
 				});
 			}
+		}
+	}
+
+	onRatingUpdateEvent() {
+		if (typeof this.props.list === "function") {
+			// list prop is a function, indicating a desire in reactivity
+			// so update the list & the loadedList state
+			this.list = this.props.list();
+			let length = this.state.loadedList.length;
+			this.setState({
+				loadedList: this.list.slice(0, length)
+			});
 		}
 	}
 

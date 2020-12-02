@@ -11,7 +11,7 @@ export default class RatedPage extends React.Component {
 				<p className="caption">
 					You haven't rated any movies!<br/>Give some ratings within the the browse tab first!
 				</p> :
-				<MovieListing list={system.getRatedMovies()}/>
+				<MovieListing list={() => system.getRatedMovies() /* NOTE: intentionally a function for reactivity*/}/>
 			}
 		</div>
 	}
