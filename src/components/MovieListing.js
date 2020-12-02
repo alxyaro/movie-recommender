@@ -7,13 +7,16 @@ export default class MovieListing extends Component {
 		super(props);
 		this.loadPointRef = React.createRef();
 		this.state = {
-			loadedList: []
+			loadedList: [],
+			updatePending: false,
+			updateBtnFadeOut: false
 		};
 
 		this.list = typeof this.props.list === "function" ? this.props.list() : this.props.list;
 
 		this.tryLoad = this.tryLoad.bind(this);
 		this.onRatingUpdateEvent = this.onRatingUpdateEvent.bind(this);
+		this.updateListing = this.updateListing.bind(this);
 	}
 
 	componentDidMount() {
@@ -47,20 +50,34 @@ export default class MovieListing extends Component {
 	onRatingUpdateEvent() {
 		if (typeof this.props.list === "function") {
 			// list prop is a function, indicating a desire in reactivity
-			// so update the list & the loadedList state
+			this.setState({
+				updatePending: true
+			});
+		}
+	}
+
+	updateListing() {
+		if (this.state.updatePending) {
+			// update the list & the loadedList state
 			this.list = this.props.list();
 			let length = this.state.loadedList.length;
 			this.setState({
-				loadedList: this.list.slice(0, length)
+				loadedList: this.list.slice(0, length),
+				updatePending: false,
+				updateBtnFadeOut: true
 			});
+			setTimeout(() => {
+				this.setState({
+					updateBtnFadeOut: false
+				});
+			}, 300);
 		}
-		if (this.props.onRatingUpdate)
-			this.props.onRatingUpdate();
 	}
 
 	render() {
 		return (
 			<div>
+				{this.state.updatePending || this.state.updateBtnFadeOut ? <button className={"update-button"+(this.state.updateBtnFadeOut ? " fade-out" : "")} onClick={this.updateListing}>Update List</button> : ""}
 				<div className="movies-container">
 					{this.state.loadedList.map(movie => <Movie key={movie.id} movie={movie} showRelevancy={this.props.showRelevancy || false}/>)}
 				</div>

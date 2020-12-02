@@ -6,18 +6,30 @@ import MovieListing from '../components/MovieListing';
 export default class RecommendedPage extends React.Component {
 	constructor(props) {
 		super(props);
-		// set this in the constructor, so it's not called again during routine re-renders
-		this.movies = system.getRecommendedMovies();
+		this.state = { movies: [] };
+		this.updateAndGetList = this.updateAndGetList.bind(this);
+	}
+
+	componentDidMount() {
+		this.updateAndGetList();
+	}
+
+	updateAndGetList() {
+		const newList = system.getRecommendedMovies();
+		this.setState({
+			movies: newList
+		});
+		return newList;
 	}
 
 	render() {
 		return <div>
-			{this.movies.length === 0 ?
+			{this.state.movies.length === 0 ?
 				<p className="caption">
-					Give a variety of ratings in the browse tab to get some recommendations!<br/>
-					Our algorithm will recommend movies based on your past ratings in relation to the taste of other users.
+					You haven't given enough ratings to get any recommendations! <br/>
+					Give some movie ratings within the browse tab first!
 				</p> :
-				<MovieListing list={this.movies} showRelevancy={true}/>
+				<MovieListing list={this.updateAndGetList} showRelevancy={true}/>
 			}
 		</div>;
 	}
