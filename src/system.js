@@ -20,6 +20,7 @@ let userRatingsObj = {}
 let cachedRatedMovies = null;
 let cachedRecommendedMovies = null;
 
+// CORE CALCULATION LOGIC
 
 function calcPearsonCorrelationCoefficient(obj1, avg1, obj2, avg2) {
 	// it is most optimal to iterate the smallest array when we need the intersection
@@ -63,6 +64,7 @@ function calcPearsonCorrelationCoefficient(obj1, avg1, obj2, avg2) {
 
 function calcEstimatedRating(similarities, movieId) {
 	// this is done using weighted-sum aggregation
+	// in other words, this function gets the weighted average rating based on the ratings of the similar users
 	let numerator = 0;
 	let denominator = 0;
 	for (let simObj of similarities) {
@@ -73,7 +75,11 @@ function calcEstimatedRating(similarities, movieId) {
 			denominator += Math.abs(simObj.sim); // abs value for good measure & formula formality; negative similarities are discarded
 		}
 	}
-	if (denominator === 0) return 0;
+
+	// if denominator is zero, numerator is certainly also zero
+	// in general, this means that none of the similar users have rated this movie; so there is no estimate to return
+	if (denominator === 0) return undefined;
+
 	return Math.min(numerator/denominator, 5); // once again, sometimes, the result can have precision error & be slightly larger than 5; so cap it
 }
 
@@ -110,17 +116,21 @@ function calcRecommendedMovies() {
 	for (let movie of movies) {
 		delete movie.match;
 		if (!movie.userRating) {
-			result.push(movie);
-			// calculate the estimated rating for this movie, averaging the ratings of similar users
-			movie.match = calcEstimatedRating(similarities, movie.id);
-			// then, map this from [1, 5] to [0, 1], so it's a "recommendation match percentage"
-			movie.match = (calcEstimatedRating(similarities, movie.id)-1) / 4;
+			// calculate the estimated rating for this movie
+			const estimatedRating = calcEstimatedRating(similarities, movie.id);
+			if (estimatedRating) {
+				// then, map this from [1, 5] to [0, 1], so it's a "recommendation match percentage"
+				movie.match = (estimatedRating-1) / 4;
+				result.push(movie);
+			}
 		}
 	}
 	result.sort((a, b) => b.match-a.match); // sort movies by descending matches (highest matched movies go first)
 	// console.log("scores:", result.map(movie => movie.match));
 	return result; // enjoy
 }
+
+// EXPORTED FUNCTIONS
 
 export function getAllMovies() {
 	return movies;
@@ -148,7 +158,7 @@ export function ratingUpdated(movie, rating) {
 	} else {
 		delete userRatingsObj[movie.id];
 	}
-	// invalid caches
+	// invalidate caches
 	cachedRatedMovies = null;
 	cachedRecommendedMovies = null;
 }
