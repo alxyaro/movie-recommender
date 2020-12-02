@@ -16,6 +16,15 @@ for (let userId in ratingsMap) {
 
 
 let userRatingsObj = {}
+const storedRatings = localStorage.getItem("ratings");
+if (storedRatings) {
+	try {
+		userRatingsObj = JSON.parse(storedRatings);
+		for (let movieId in userRatingsObj) {
+			movieIdsToMovies[movieId].userRating = userRatingsObj[movieId];
+		}
+	} catch (ignored) {}
+}
 
 let cachedRatedMovies = null;
 let cachedRecommendedMovies = null;
@@ -161,4 +170,7 @@ export function ratingUpdated(movie, rating) {
 	// invalidate caches
 	cachedRatedMovies = null;
 	cachedRecommendedMovies = null;
+
+	// store ratings in localStorage
+	localStorage.setItem("ratings", JSON.stringify(userRatingsObj));
 }
