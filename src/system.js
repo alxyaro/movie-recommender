@@ -67,7 +67,14 @@ function calcPearsonCorrelationCoefficient(obj1, avg1, obj2, avg2) {
 
 	const denominator = Math.sqrt(denominatorSum1*denominatorSum2);
 	if (denominator === 0) return 0;
-	const result = numerator/denominator;
+	let result = numerator/denominator;
+
+	// if the result is positive (users are similar), adjust the similarity based on how many movies the two users actually have in common
+	// the idea is that only 1 movie rated doesn't say much (could just be a coincidence that the rating was identical)
+	// on the other hand, if many movie ratings were similar, this does indicate high similarity
+	if (result > 0)
+		result *= Math.min(1, totalComparedRatings/5); // less than 5 mutual movie ratings would lower the calculated similarity
+
 	return Math.min(result, 1); // sometimes, the result can have precision error & be slightly larger than 1; so cap it
 }
 
@@ -76,14 +83,20 @@ function calcEstimatedRating(similarities, movieId) {
 	// in other words, this function gets the weighted average rating based on the ratings of the similar users
 	let numerator = 0;
 	let denominator = 0;
+
+	let userCount = 0;
 	for (let simObj of similarities) {
 		const userId = simObj.userId;
 		const ratingData = ratingsMap[userId];
 		if (ratingData.hasOwnProperty(movieId)) {
+			userCount++;
 			numerator += simObj.sim * ratingData[movieId];
 			denominator += Math.abs(simObj.sim); // abs value for good measure & formula formality; negative similarities are discarded
 		}
 	}
+
+	// do not give an estimate if there's less than 2 rating opinions
+	if (userCount < 2) return undefined;
 
 	// if denominator is zero, numerator is certainly also zero
 	// in general, this means that none of the similar users have rated this movie; so there is no estimate to return
